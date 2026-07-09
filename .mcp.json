@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "neogo": {
+      "type": "url",
+      "url": "https://mcp.neogo.app",
+      "auth": "oauth"
+    }
+  }
+}
