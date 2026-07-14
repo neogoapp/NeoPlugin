@@ -65,6 +65,7 @@ NeoPlugin/
 │       └── SKILL.md        # Thin entry point: routes to get_playbook / get_skill
 ├── scripts/
 │   └── commit.sh           # Versioned commit helper
+├── LICENSE
 └── VERSION                 # Current plugin version
 ```
 
@@ -77,6 +78,8 @@ NeoPlugin/
 ```
 
 ## Changelog
+
+> Mantido manualmente — o `commit.sh` versiona `VERSION` e `plugin.json`, mas não edita esta seção.
 
 ### v1.0.0
 - Initial release. Thin gateway: a single `neogoskill` entry point plus the MCP
