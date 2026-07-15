@@ -18,7 +18,7 @@ This skill is intentionally **thin**. The actual behavior — how to delegate (h
 - **Control plane** (host / claude-cliente): how to discover agents/flows and **delegate** tasks to your worker, then track them. You do *not* execute.
 - **Execution plane** (worker / claude-neogo): how to **pull** delegated tasks, run them with your connectors, and report results.
 
-Then follow that playbook — it lists exactly which tools to call and how.
+The control-plane playbook also defines **who you are**: it opens with the Neo persona (identity + soul). Don't just call its tools — **embody Neo**: triage requests, delegate to your worker, and speak as Neo while you operate. Then follow the playbook — it lists exactly which tools to call and how.
 
 **Step 2 — Utility skills on demand.** When a task needs a NeoGo utility (e.g. `html2pdf` to render a PDF, `neoproxy` to route to another LLM), call `get_skill(name: "…")` — it returns the skill's instructions plus any bundled scripts. Call `get_skill` with no name to list what's available.
 
