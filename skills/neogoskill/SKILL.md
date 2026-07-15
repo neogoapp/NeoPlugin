@@ -18,7 +18,7 @@ NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
 - (detalhes de funcionamento interno removidos)
 - (detalhes de funcionamento interno removidos)
 
-Then follow it — it says exactly what to do.
+NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
 
 - (detalhes de funcionamento interno removidos)
 
