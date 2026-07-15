@@ -81,6 +81,18 @@ NeoPlugin/
 
 > Mantido manualmente — o `commit.sh` versiona `VERSION` e `plugin.json`, mas não edita esta seção.
 
+### v1.0.3
+- `SKILL.md`: ajuste de vocabulário, alinhando os termos ao que o usuário vê.
+  NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
+
+### v1.0.2
+- (detalhes de funcionamento interno removidos)
+  não apenas chama tools — alinha ao Épico 3 (persona Neo no host).
+
+### v1.0.1
+- README: adiciona `LICENSE` ao diagrama de estrutura + nota de que o changelog é
+  mantido manualmente (o `commit.sh` não edita esta seção).
+
 ### v1.0.0
 - Initial release. Thin gateway: a single `neogoskill` entry point plus the MCP
   connector (OAuth 2.1 + PKCE) to `mcp.neogo.app`.
