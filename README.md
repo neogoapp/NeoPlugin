@@ -81,6 +81,18 @@ NeoPlugin/
 
 > Mantido manualmente — o `commit.sh` versiona `VERSION` e `plugin.json`, mas não edita esta seção.
 
+### v1.0.3
+- `SKILL.md` alinhado ao modelo **flows são skills**: "agent/flow" → "agent/skill"
+  (um procedimento multi-step é uma skill servida por `get_skill`, sem motor de workflow).
+
+### v1.0.2
+- `SKILL.md`: o host **encarna** a persona Neo servida pelo playbook (`get_playbook`),
+  não apenas chama tools — alinha ao Épico 3 (persona Neo no host).
+
+### v1.0.1
+- README: adiciona `LICENSE` ao diagrama de estrutura + nota de que o changelog é
+  mantido manualmente (o `commit.sh` não edita esta seção).
+
 ### v1.0.0
 - Initial release. Thin gateway: a single `neogoskill` entry point plus the MCP
   connector (OAuth 2.1 + PKCE) to `mcp.neogo.app`.
