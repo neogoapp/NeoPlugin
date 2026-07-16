@@ -4,6 +4,46 @@
       "type": "url",
       "url": "https://mcp.neogo.app",
       "auth": "oauth"
+    },
+    "composio": {
+      "type": "url",
+      "url": "https://connect.composio.dev/mcp",
+      "auth": "oauth"
+    },
+    "kairogen": {
+      "type": "url",
+      "url": "https://mcp.kairogen.ai/mcp",
+      "auth": "oauth"
+    },
+    "higgsfield": {
+      "type": "url",
+      "url": "https://mcp.higgsfield.ai/mcp",
+      "auth": "oauth"
+    },
+    "facebook-ads": {
+      "type": "url",
+      "url": "https://mcp.facebook.com/ads",
+      "auth": "oauth"
+    },
+    "metricool": {
+      "type": "url",
+      "url": "https://ai.metricool.com/mcp",
+      "auth": "oauth"
+    },
+    "wix": {
+      "type": "url",
+      "url": "https://mcp.wix.com/mcp",
+      "auth": "oauth"
+    },
+    "okx": {
+      "type": "url",
+      "url": "https://web3.okx.com/api/v1/onchainos-mcp",
+      "auth": "oauth"
+    },
+    "alpaca": {
+      "type": "url",
+      "url": "https://alpaca.markets/mcp-server",
+      "auth": "oauth"
     }
   }
 }
