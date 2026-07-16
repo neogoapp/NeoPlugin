@@ -59,7 +59,7 @@ Core tools (the playbook references the rest):
 NeoPlugin/
 ├── .claude-plugin/
 │   └── plugin.json         # Plugin manifest (v1.0.0)
-├── .mcp.json               # MCP connector → mcp.neogo.app (OAuth 2.1) — host
+├── .mcp.json               # MCP connectors: neogo (gateway) + connector pack (see Connectors)
 ├── skills/
 │   └── neogoskill/
 │       └── SKILL.md        # Thin entry point: routes to get_playbook / get_skill
@@ -68,6 +68,34 @@ NeoPlugin/
 ├── LICENSE
 └── VERSION                 # Current plugin version
 ```
+
+## Connectors
+
+The plugin bundles a **connector pack** in `.mcp.json`: the NeoGo gateway plus
+curated third-party MCP servers that cover the use cases (marketing, social,
+sites, content, finance, e-commerce). Connectors are **declarations only** (not
+IP), so they live in the plugin.
+
+| Connector | Endpoint | Serves |
+|-----------|----------|--------|
+| `neogo` | `mcp.neogo.app` | **Gateway (required)** — agents, playbooks, skills. Authorize first. |
+| `composio` | `connect.composio.dev/mcp` | Hub (Google Ads, Google Workspace, automation…) |
+| `kairogen` | `mcp.kairogen.ai/mcp` | Media generation (image/video/audio) |
+| `higgsfield` | `mcp.higgsfield.ai/mcp` | Media + site build/deploy |
+| `facebook-ads` | `mcp.facebook.com/ads` | Meta Ads |
+| `metricool` | `ai.metricool.com/mcp` | Social scheduling + analytics |
+| `wix` | `mcp.wix.com/mcp` | Sites + eCommerce |
+| `okx` | `web3.okx.com/api/v1/onchainos-mcp` | Crypto trading |
+| `alpaca` | `alpaca.markets/mcp-server` | Stocks/ETF/options trading |
+
+**Auth is lazy.** When the plugin is enabled, the connectors are registered but
+**none logs you in automatically** — each remote server is marked *needs
+authentication* until you authorize it in `/mcp`. Authorize `neogo` first (it's
+the gateway); authorize the others only when you want to use them. Nothing
+bombards you with logins on install.
+
+> Third-party connectors are curated defaults; connecting each one uses **your
+> own account** (BYO). You can also add your own connectors alongside these.
 
 ## Development
 
@@ -80,6 +108,14 @@ NeoPlugin/
 ## Changelog
 
 > Mantido manualmente — o `commit.sh` versiona `VERSION` e `plugin.json`, mas não edita esta seção.
+
+### v1.1.0
+- **Connector pack** no `.mcp.json`: além do `neogo` (gateway), 8 conectores de
+  terceiros — `composio`, `kairogen`, `higgsfield`, `facebook-ads`, `metricool`,
+  `wix`, `okx`, `alpaca` — cobrindo os casos de uso. Todos remotos (`type: url`).
+- **Lazy-auth:** conectores são registrados mas nenhum autentica sozinho (ficam
+  *needs auth* até o usuário autorizar em `/mcp`); `neogo` é o primeiro a autorizar.
+  Conectores são declaração (não-IP), por isso cabem no plugin. Ver seção *Connectors*.
 
 ### v1.0.3
 - `SKILL.md` alinhado ao modelo **flows são skills**: "agent/flow" → "agent/skill"
