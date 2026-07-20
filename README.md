@@ -4,23 +4,33 @@ Claude Plugin that connects Claude to Neo — your AI agent running outside the 
 
 ## What it does
 
-NeoPlugin is a **thin gateway**. It adds one MCP connector and one small skill (`NeoSkill`). Everything else — how to delegate work, how the worker executes it, the available agents/flows, and the utility skills — is served **on demand** by the NeoGo MCP server. This keeps the plugin tiny and always current: new behavior ships on the server, not in a plugin update.
+NeoPlugin is the **way in** to NeoGo. It adds one MCP connector and one small skill
+(`NeoSkill`), and it carries **Neo** — the assistant the user talks to.
+
+Neo's job here is to get the user connected and keep them connected:
+
+- **Not a NeoGo user yet?** Neo explains what it is in terms of what *they* do, and points
+  them to sign up. Honestly — no invented capabilities, no manufactured urgency.
+- **Already a user?** Neo is their point of contact: it delegates their work, tracks it,
+  brings the result back, and owns the problem when something is off (worker offline,
+  connection unauthorized, subscription lapsed, connector missing).
 
 With NeoGo you:
 
-- **Delegate multi-agent workflows** in natural language to **your own worker** — a container on your machine running a second Claude (**claude-neogo**) logged in with **your own Anthropic account** (BYO). No central LLM proxy, no platform API keys.
-- **Use NeoGo utilities on demand** (e.g. `html2pdf`, `neoproxy`) fetched from the server when needed.
+- **Delegate multi-agent workflows** in natural language to **your own worker** — a
+  container on your machine running with **your own Anthropic account** (BYO). No central
+  LLM proxy, no platform API keys.
+- **Use NeoGo utilities on demand** (e.g. `html2pdf`) fetched from the server when needed.
 
 Authentication is automatic via **OAuth 2.1 + PKCE** — no token configuration.
 
 ## How it works
 
-The same plugin runs in two roles, and the server tells you which you are (by your token):
+The plugin is deliberately thin, and it holds **no domain knowledge**. The specialists, the
+routing and the procedures are served by the NeoGo server and run on the worker — new
+behavior ships on the server, not in a plugin update.
 
-- **Host / claude-cliente (control plane)** — you *delegate* tasks to your worker and track them.
-- **Worker / claude-neogo (execution plane)** — you *pull* delegated tasks, run them with your connectors, and report back.
-
-The `NeoSkill` skill is the entry point. On any NeoGo request it calls **`get_playbook`**, which returns the right protocol for your role; utility skills come from **`get_skill`**.
+Neo talks to the user and hands work over; the worker does it and reports back.
 
 ## Installation
 
@@ -46,23 +56,27 @@ On first use, Claude opens the OAuth flow automatically.
 
 The connector at `mcp.neogo.app` uses OAuth 2.1 + PKCE. Claude handles the auth flow transparently — no manual token setup.
 
-Core tools (the playbook references the rest):
+Tools available to the plugin:
 
 | Tool | Description |
 |------|-------------|
-| `get_playbook` | Get your role's operating protocol (control or execution). Call this first. |
-| `get_skill` | Fetch a utility skill on demand (instructions + bundled files). Omit name to list. |
+| `submit_task` | Delegate a task to the user's worker |
+| `task_status` | Track a delegated task and read its result |
+| `list_agents` | List available agents (system + the user's own) |
+| `get_agent_definition` | Get an agent's definition |
+| `get_skill` | Fetch a utility skill on demand. Omit the name to list. |
+| `get_notifications` | Read NeoGo notifications (e.g. login codes) |
 
 ## Structure
 
 ```
 NeoPlugin/
 ├── .claude-plugin/
-│   └── plugin.json         # Plugin manifest (v1.0.0)
+│   └── plugin.json         # Plugin manifest
 ├── .mcp.json               # MCP connectors: neogo (gateway) + connector pack (see Connectors)
 ├── skills/
 │   └── NeoSkill/
-│       └── SKILL.md        # Thin entry point: routes to get_playbook / get_skill
+│       └── SKILL.md        # Neo: connects, sells, supports, delegates
 ├── scripts/
 │   └── commit.sh           # Versioned commit helper
 ├── LICENSE
@@ -108,6 +122,20 @@ bombards you with logins on install.
 ## Changelog
 
 > Mantido manualmente — o `commit.sh` versiona `VERSION` e `plugin.json`, mas não edita esta seção.
+
+### v1.2.1
+- Renomeia a skill `neogoskill` → **`NeoSkill`** e o plugin `neo` → **`Neo`**, alinhando ao
+  nome que a arquitetura já usava.
+
+### v1.2.0
+- **O plugin passa a carregar o Neo externo** — persona própria, sem IP. Antes ele buscava a
+  persona do servidor via `get_playbook`; agora nasce sabendo quem é.
+- **Papel explicitado:** Neo é a porta de entrada. Vende o NeoGo a quem ainda não é usuário
+  e é o ponto de contato de quem já é (delega, rastreia, e resolve conexão/conta/worker).
+- **Sem conhecimento de domínio no plugin.** Especialistas, roteamento e procedimentos são
+  servidos pelo servidor e rodam no worker. O plugin tem tom, não método.
+- `get_playbook` sai das tools do plugin: o papel não é descoberto em runtime, é determinado
+  por onde se está.
 
 ### v1.1.0
 - **Connector pack** no `.mcp.json`: além do `neogo` (gateway), 8 conectores de
