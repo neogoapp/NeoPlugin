@@ -5,7 +5,7 @@ Claude Plugin that connects Claude to Neo — your AI agent running outside the 
 ## What it does
 
 NeoPlugin is the **way in** to NeoGo. It adds one MCP connector and one small skill
-(`neoskill`), and it carries **Neo** — the assistant the user talks to.
+(`neo`), and it carries **Neo** — the assistant the user talks to.
 
 Neo's job here is to get the user connected and keep them connected:
 
@@ -77,7 +77,7 @@ NeoPlugin/
 │   └── plugin.json         # Plugin manifest
 ├── .mcp.json               # MCP connectors: neogo (gateway) + connector pack (see Connectors)
 ├── skills/
-│   └── neoskill/
+│   └── neo/
 │       └── SKILL.md        # Neo: connects, sells, supports, delegates
 ├── scripts/
 │   └── commit.sh           # Versioned commit helper
@@ -128,7 +128,7 @@ bombards you with logins on install.
 ### v1.4.1
 - **Identificadores em minúsculas, por spec.** O `name` do `plugin.json` exige **kebab-case**
   e o `name` da skill exige **apenas minúsculas, números e hífens** (docs oficiais de plugins
-  e de Agent Skills). Os valores viraram: plugin `neoplugin` · pasta da skill `neoskill` ·
+  e de Agent Skills). Os valores viraram: plugin `neoplugin` · pasta da skill `neo` ·
   `name` da skill `neo`. O usuário continua vendo "Neo" — isso vem da persona no `SKILL.md`,
   não do identificador.
 
@@ -140,7 +140,7 @@ bombards you with logins on install.
   quando invocado em qualquer outro canal.
 
 ### v1.2.1
-- Renomeia a skill `neogoskill` → **`neoskill`**, alinhando ao nome que a arquitetura já usava.
+- Renomeia a skill `neogoskill` → **`neo`**, alinhando ao nome que a arquitetura já usava.
 
 ### v1.2.0
 - **O plugin passa a carregar o Neo externo** — persona própria, sem IP. Antes ele buscava a
@@ -173,7 +173,7 @@ bombards you with logins on install.
   mantido manualmente (o `commit.sh` não edita esta seção).
 
 ### v1.0.0
-- Initial release. Thin gateway: a single `neoskill` entry point plus the MCP
+- Initial release. Thin gateway: a single `neo` entry point plus the MCP
   connector (OAuth 2.1 + PKCE) to `mcp.neogo.app`.
 - The operating protocol and utilities are served on demand by the server
   (`get_playbook`, `get_skill`) — the plugin stays tiny and always current.
