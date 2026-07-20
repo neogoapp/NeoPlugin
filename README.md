@@ -11,15 +11,15 @@ Neo's job here is to get the user connected and keep them connected:
 
 - **Not a NeoGo user yet?** Neo explains what it is in terms of what *they* do, and points
   them to sign up. Honestly — no invented capabilities, no manufactured urgency.
-- **Already a user?** Neo is their point of contact: it delegates their work, tracks it,
-  brings the result back, and owns the problem when something is off (worker offline,
-  connection unauthorized, subscription lapsed, connector missing).
+- **Already a user?** Neo is their point of contact: it does the work in the container and
+  owns the problem when something is off (container not running, connection unauthorized,
+  subscription lapsed, connector missing).
 
 With NeoGo you:
 
-- **Delegate multi-agent workflows** in natural language to **your own worker** — a
-  container on your machine running with **your own Anthropic account** (BYO). No central
-  LLM proxy, no platform API keys.
+- **Run multi-agent workflows** in natural language on **your own container** — on your
+  machine, with **your own Anthropic account** (BYO). No central LLM proxy, no platform
+  API keys.
 - **Use NeoGo utilities on demand** (e.g. `html2pdf`) fetched from the server when needed.
 
 Authentication is automatic via **OAuth 2.1 + PKCE** — no token configuration.
@@ -27,10 +27,11 @@ Authentication is automatic via **OAuth 2.1 + PKCE** — no token configuration.
 ## How it works
 
 The plugin is deliberately thin, and it holds **no domain knowledge**. The specialists, the
-routing and the procedures are served by the NeoGo server and run on the worker — new
+routing and the procedures are served by the NeoGo server and run in the container — new
 behavior ships on the server, not in a plugin update.
 
-Neo talks to the user and hands work over; the worker does it and reports back.
+The user reaches Neo in the **Code session** that connects to their container (Remote
+Control). Invoked in any other channel, Neo redirects them there.
 
 ## Installation
 
@@ -60,12 +61,13 @@ Tools available to the plugin:
 
 | Tool | Description |
 |------|-------------|
-| `submit_task` | Delegate a task to the user's worker |
-| `task_status` | Track a delegated task and read its result |
-| `list_agents` | List available agents (system + the user's own) |
-| `get_agent_definition` | Get an agent's definition |
-| `get_skill` | Fetch a utility skill on demand. Omit the name to list. |
-| `get_notifications` | Read NeoGo notifications (e.g. login codes) |
+| `get_install_link` | Onboarding — the installer for the user's OS |
+| `get_plugin_manifest` | Onboarding — what is available |
+| `get_login_code` | The second factor of the login, delivered in Claude |
+
+The IP tools (specialists, skills, flows) are **not** available here — they require the
+proof that only the container has. There is **no task queue**: inside the container the user
+commands Claude directly through Remote Control.
 
 ## Structure
 
@@ -123,6 +125,13 @@ bombards you with logins on install.
 
 > Mantido manualmente — o `commit.sh` versiona `VERSION` e `plugin.json`, mas não edita esta seção.
 
+### v1.3.1
+- **Correção:** o plugin descrevia um modelo de fila (`submit_task`/`task_status`) herdado da
+  v2, que a **D5 revogou** — o usuário comanda o claude-code direto por Remote Control, sem
+  round-trip via MCP. Removidas as tools de fila e o "delegue, não execute"; entra a regra de
+  **redirecionamento** (D38): o Neo age na sessão Code que alcança o container, e redireciona
+  quando invocado em qualquer outro canal.
+
 ### v1.2.1
 - Renomeia a skill `neogoskill` → **`NeoSkill`** e o plugin `neo` → **`Neo`**, alinhando ao
   nome que a arquitetura já usava.
@@ -131,9 +140,9 @@ bombards you with logins on install.
 - **O plugin passa a carregar o Neo externo** — persona própria, sem IP. Antes ele buscava a
   persona do servidor via `get_playbook`; agora nasce sabendo quem é.
 - **Papel explicitado:** Neo é a porta de entrada. Vende o NeoGo a quem ainda não é usuário
-  e é o ponto de contato de quem já é (delega, rastreia, e resolve conexão/conta/worker).
+  e é o ponto de contato de quem já é (resolve conexão, conta e container).
 - **Sem conhecimento de domínio no plugin.** Especialistas, roteamento e procedimentos são
-  servidos pelo servidor e rodam no worker. O plugin tem tom, não método.
+  servidos pelo servidor e rodam no container. O plugin tem tom, não método.
 - `get_playbook` sai das tools do plugin: o papel não é descoberto em runtime, é determinado
   por onde se está.
 
