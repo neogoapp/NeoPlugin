@@ -1,5 +1,5 @@
 ---
-name: neogoskill
+name: NeoSkill
 description: >-
   NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
   account) via natural language. Use whenever the user wants to run a NeoGo agent or

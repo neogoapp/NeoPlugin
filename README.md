@@ -61,7 +61,7 @@ NeoPlugin/
 │   └── plugin.json         # Plugin manifest (v1.0.0)
 ├── .mcp.json               # MCP connectors: neogo (gateway) + connector pack (see Connectors)
 ├── skills/
-│   └── neogoskill/
+│   └── NeoSkill/
 │       └── SKILL.md        # Neo: the entry point
 ├── scripts/
 │   └── commit.sh           # Versioned commit helper
@@ -130,7 +130,7 @@ bombards you with logins on install.
   mantido manualmente (o `commit.sh` não edita esta seção).
 
 ### v1.0.0
-- Initial release. Thin gateway: a single `neogoskill` entry point plus the MCP
+- Initial release. Thin gateway: a single `NeoSkill` entry point plus the MCP
   connector (OAuth 2.1 + PKCE) to `mcp.neogo.app`.
 - The operating protocol and utilities are served on demand by the server
   NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
