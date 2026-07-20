@@ -11,15 +11,15 @@ Neo's job here is to get the user connected and keep them connected:
 
 - **Not a NeoGo user yet?** Neo explains what it is in terms of what *they* do, and points
   them to sign up. Honestly — no invented capabilities, no manufactured urgency.
-- (detalhes de funcionamento interno removidos)
-  NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
-  connection unauthorized, subscription lapsed, connector missing).
+- **Already a user?** Neo is their point of contact: it does the work in the container and
+  owns the problem when something is off (container not running, connection unauthorized,
+  subscription lapsed, connector missing).
 
 With NeoGo you:
 
-- (detalhes de funcionamento interno removidos)
-  container on your machine running with **your own Anthropic account** (BYO). No central
-  LLM proxy, no platform API keys.
+- **Run multi-agent workflows** in natural language on **your own container** — on your
+  machine, with **your own Anthropic account** (BYO). No central LLM proxy, no platform
+  API keys.
 - (detalhes de funcionamento interno removidos)
 
 Authentication is automatic via **OAuth 2.1 + PKCE** — no token configuration.
@@ -27,10 +27,11 @@ Authentication is automatic via **OAuth 2.1 + PKCE** — no token configuration.
 ## How it works
 
 The plugin is deliberately thin, and it holds **no domain knowledge**. What NeoGo knows
-NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
+routing and the procedures are served by the NeoGo server and run in the container — new
 behavior ships on the server, not in a plugin update.
 
-NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
+The user reaches Neo in the **Code session** that connects to their container (Remote
+Control). Invoked in any other channel, Neo redirects them there.
 
 ## Installation
 
@@ -60,12 +61,13 @@ Tools available to the plugin:
 
 | Tool | Description |
 |------|-------------|
+| `get_install_link` | Onboarding — the installer for the user's OS |
+| `get_plugin_manifest` | Onboarding — what is available |
+| `get_login_code` | The second factor of the login, delivered in Claude |
 
-
-| `list_agents` | List available agents (system + the user's own) |
-
-
-
+These are the tools of the door: connect, subscribe, sign in, install.
+NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
+commands Claude directly through Remote Control.
 
 ## Structure
 
@@ -123,6 +125,13 @@ bombards you with logins on install.
 
 > Mantido manualmente — o `commit.sh` versiona `VERSION` e `plugin.json`, mas não edita esta seção.
 
+### v1.3.1
+- (detalhes de funcionamento interno removidos)
+  v2, que a **D5 revogou** — o usuário comanda o claude-code direto por Remote Control, sem
+  round-trip via MCP. Removidas as tools de fila e o "delegue, não execute"; entra a regra de
+  **redirecionamento** (D38): o Neo age na sessão Code que alcança o container, e redireciona
+  quando invocado em qualquer outro canal.
+
 ### v1.2.1
 - Renomeia a skill `neogoskill` → **`NeoSkill`** e o plugin `neo` → **`Neo`**, alinhando ao
   nome que a arquitetura já usava.
@@ -131,9 +140,9 @@ bombards you with logins on install.
 - **O plugin passa a carregar o Neo externo** — persona própria, sem IP. Antes ele buscava a
   NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
 - **Papel explicitado:** Neo é a porta de entrada. Vende o NeoGo a quem ainda não é usuário
-  NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
+  e é o ponto de contato de quem já é (resolve conexão, conta e container).
 - **Sem conhecimento de domínio no plugin.** O que o NeoGo sabe fazer não mora aqui.
-  NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
+  servidos pelo servidor e rodam no container. O plugin tem tom, não método.
 - (detalhes de funcionamento interno removidos)
   por onde se está.
 
