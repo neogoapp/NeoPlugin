@@ -4,21 +4,31 @@ Claude Plugin that connects Claude to Neo — your AI agent running outside the 
 
 ## What it does
 
-NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
+NeoPlugin is the **way in** to NeoGo. It adds one MCP connector and one small skill
+(`NeoSkill`), and it carries **Neo** — the assistant the user talks to.
+
+Neo's job here is to get the user connected and keep them connected:
+
+- **Not a NeoGo user yet?** Neo explains what it is in terms of what *they* do, and points
+  them to sign up. Honestly — no invented capabilities, no manufactured urgency.
+- (detalhes de funcionamento interno removidos)
+  NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
+  connection unauthorized, subscription lapsed, connector missing).
 
 With NeoGo you:
 
 - (detalhes de funcionamento interno removidos)
+  container on your machine running with **your own Anthropic account** (BYO). No central
+  LLM proxy, no platform API keys.
 - (detalhes de funcionamento interno removidos)
 
 Authentication is automatic via **OAuth 2.1 + PKCE** — no token configuration.
 
 ## How it works
 
-The same plugin runs in two roles, and the server tells you which you are (by your token):
-
-- (detalhes de funcionamento interno removidos)
-- (detalhes de funcionamento interno removidos)
+The plugin is deliberately thin, and it holds **no domain knowledge**. What NeoGo knows
+NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
+behavior ships on the server, not in a plugin update.
 
 NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
 
@@ -46,10 +56,14 @@ On first use, Claude opens the OAuth flow automatically.
 
 The connector at `mcp.neogo.app` uses OAuth 2.1 + PKCE. Claude handles the auth flow transparently — no manual token setup.
 
-Tools:
+Tools available to the plugin:
 
 | Tool | Description |
 |------|-------------|
+
+
+| `list_agents` | List available agents (system + the user's own) |
+
 
 
 
@@ -58,11 +72,11 @@ Tools:
 ```
 NeoPlugin/
 ├── .claude-plugin/
-│   └── plugin.json         # Plugin manifest (v1.0.0)
+│   └── plugin.json         # Plugin manifest
 ├── .mcp.json               # MCP connectors: neogo (gateway) + connector pack (see Connectors)
 ├── skills/
 │   └── NeoSkill/
-│       └── SKILL.md        # Neo: the entry point
+│       └── SKILL.md        # Neo: connects, sells, supports, delegates
 ├── scripts/
 │   └── commit.sh           # Versioned commit helper
 ├── LICENSE
@@ -108,6 +122,20 @@ bombards you with logins on install.
 ## Changelog
 
 > Mantido manualmente — o `commit.sh` versiona `VERSION` e `plugin.json`, mas não edita esta seção.
+
+### v1.2.1
+- Renomeia a skill `neogoskill` → **`NeoSkill`** e o plugin `neo` → **`Neo`**, alinhando ao
+  nome que a arquitetura já usava.
+
+### v1.2.0
+- **O plugin passa a carregar o Neo externo** — persona própria, sem IP. Antes ele buscava a
+  NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
+- **Papel explicitado:** Neo é a porta de entrada. Vende o NeoGo a quem ainda não é usuário
+  NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
+- **Sem conhecimento de domínio no plugin.** O que o NeoGo sabe fazer não mora aqui.
+  NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
+- (detalhes de funcionamento interno removidos)
+  por onde se está.
 
 ### v1.1.0
 - **Connector pack** no `.mcp.json`: além do `neogo` (gateway), 8 conectores de
