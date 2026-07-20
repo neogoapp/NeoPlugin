@@ -1,5 +1,5 @@
 ---
-name: neogoskill
+name: NeoSkill
 description: >-
   Your gateway to NeoGo — run multi-agent workflows on your own worker (BYO Anthropic
   account) via natural language. Use whenever the user wants to run a NeoGo agent or

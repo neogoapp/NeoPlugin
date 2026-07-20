@@ -4,7 +4,7 @@ Claude Plugin that connects Claude to Neo — your AI agent running outside the 
 
 ## What it does
 
-NeoPlugin is a **thin gateway**. It adds one MCP connector and one small skill (`neogoskill`). Everything else — how to delegate work, how the worker executes it, the available agents/flows, and the utility skills — is served **on demand** by the NeoGo MCP server. This keeps the plugin tiny and always current: new behavior ships on the server, not in a plugin update.
+NeoPlugin is a **thin gateway**. It adds one MCP connector and one small skill (`NeoSkill`). Everything else — how to delegate work, how the worker executes it, the available agents/flows, and the utility skills — is served **on demand** by the NeoGo MCP server. This keeps the plugin tiny and always current: new behavior ships on the server, not in a plugin update.
 
 With NeoGo you:
 
@@ -20,7 +20,7 @@ The same plugin runs in two roles, and the server tells you which you are (by yo
 - **Host / claude-cliente (control plane)** — you *delegate* tasks to your worker and track them.
 - **Worker / claude-neogo (execution plane)** — you *pull* delegated tasks, run them with your connectors, and report back.
 
-The `neogoskill` skill is the entry point. On any NeoGo request it calls **`get_playbook`**, which returns the right protocol for your role; utility skills come from **`get_skill`**.
+The `NeoSkill` skill is the entry point. On any NeoGo request it calls **`get_playbook`**, which returns the right protocol for your role; utility skills come from **`get_skill`**.
 
 ## Installation
 
@@ -61,7 +61,7 @@ NeoPlugin/
 │   └── plugin.json         # Plugin manifest (v1.0.0)
 ├── .mcp.json               # MCP connectors: neogo (gateway) + connector pack (see Connectors)
 ├── skills/
-│   └── neogoskill/
+│   └── NeoSkill/
 │       └── SKILL.md        # Thin entry point: routes to get_playbook / get_skill
 ├── scripts/
 │   └── commit.sh           # Versioned commit helper
@@ -130,7 +130,7 @@ bombards you with logins on install.
   mantido manualmente (o `commit.sh` não edita esta seção).
 
 ### v1.0.0
-- Initial release. Thin gateway: a single `neogoskill` entry point plus the MCP
+- Initial release. Thin gateway: a single `NeoSkill` entry point plus the MCP
   connector (OAuth 2.1 + PKCE) to `mcp.neogo.app`.
 - The operating protocol and utilities are served on demand by the server
   (`get_playbook`, `get_skill`) — the plugin stays tiny and always current.

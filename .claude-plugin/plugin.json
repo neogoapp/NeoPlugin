@@ -1,7 +1,11 @@
 {
-  "name": "neo",
-  "version": "1.2.0",
+  "name": "Neo",
+  "version": "1.2.1",
   "description": "Connect Claude to Neo — your AI agent running outside the Matrix. A thin gateway: multi-agent workflows and utilities are served on demand by the NeoGo MCP server (BYO Anthropic account, OAuth).",
-  "skills": ["skills/neogoskill"],
-  "mcp_servers": [".mcp.json"]
+  "skills": [
+    "skills/NeoSkill"
+  ],
+  "mcp_servers": [
+    ".mcp.json"
+  ]
 }
