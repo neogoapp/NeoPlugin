@@ -5,7 +5,7 @@ Claude Plugin that connects Claude to Neo — your AI agent running outside the 
 ## What it does
 
 NeoPlugin is the **way in** to NeoGo. It adds one MCP connector and one small skill
-(`NeoSkill`), and it carries **Neo** — the assistant the user talks to.
+(`neoskill`), and it carries **Neo** — the assistant the user talks to.
 
 Neo's job here is to get the user connected and keep them connected:
 
@@ -77,7 +77,7 @@ NeoPlugin/
 │   └── plugin.json         # Plugin manifest
 ├── .mcp.json               # MCP connectors: neogo (gateway) + connector pack (see Connectors)
 ├── skills/
-│   └── NeoSkill/
+│   └── neoskill/
 │       └── SKILL.md        # Neo: connects, sells, supports, delegates
 ├── scripts/
 │   └── commit.sh           # Versioned commit helper
@@ -125,6 +125,13 @@ bombards you with logins on install.
 
 > Mantido manualmente — o `commit.sh` versiona `VERSION` e `plugin.json`, mas não edita esta seção.
 
+### v1.4.1
+- **Identificadores em minúsculas, por spec.** O `name` do `plugin.json` exige **kebab-case**
+  e o `name` da skill exige **apenas minúsculas, números e hífens** (docs oficiais de plugins
+  e de Agent Skills). Os valores viraram: plugin `neoplugin` · pasta da skill `neoskill` ·
+  `name` da skill `neo`. O usuário continua vendo "Neo" — isso vem da persona no `SKILL.md`,
+  não do identificador.
+
 ### v1.3.1
 - **Correção:** o plugin descrevia um modelo de fila (`submit_task`/`task_status`) herdado da
   v2, que a **D5 revogou** — o usuário comanda o claude-code direto por Remote Control, sem
@@ -133,8 +140,7 @@ bombards you with logins on install.
   quando invocado em qualquer outro canal.
 
 ### v1.2.1
-- Renomeia a skill `neogoskill` → **`NeoSkill`** e o plugin `neo` → **`Neo`**, alinhando ao
-  nome que a arquitetura já usava.
+- Renomeia a skill `neogoskill` → **`neoskill`**, alinhando ao nome que a arquitetura já usava.
 
 ### v1.2.0
 - **O plugin passa a carregar o Neo externo** — persona própria, sem IP. Antes ele buscava a
@@ -167,7 +173,7 @@ bombards you with logins on install.
   mantido manualmente (o `commit.sh` não edita esta seção).
 
 ### v1.0.0
-- Initial release. Thin gateway: a single `NeoSkill` entry point plus the MCP
+- Initial release. Thin gateway: a single `neoskill` entry point plus the MCP
   connector (OAuth 2.1 + PKCE) to `mcp.neogo.app`.
 - The operating protocol and utilities are served on demand by the server
   (`get_playbook`, `get_skill`) — the plugin stays tiny and always current.
