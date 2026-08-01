@@ -2,7 +2,7 @@
   "mcpServers": {
     "neogo": {
       "type": "http",
-      "url": "https://mcp.neogo.app"
+      "url": "${user_config.neogo_mcp_url}"
     },
     "composio": {
       "type": "http",
