@@ -35,15 +35,21 @@ Control). Invoked in any other channel, Neo redirects them there.
 
 ## Installation
 
+NeoPlugin is a **public plugin**. Get `neoplugin.zip` from any of these — they all point to the same file:
+
+- the **onboarding** link (shown when you sign in at neogo.app without the plugin yet),
+- your [**NeoGo dashboard**](https://neogo.app/dashboard),
+- this repo's [**Releases**](https://github.com/neogoapp/NeoPlugin/releases/latest) (`neoplugin.zip`).
+
 ### From Claude.ai
 
-1. Download `neogo-plugin.zip` from your [NeoGo dashboard](https://neogo.app/dashboard)
+1. Download `neoplugin.zip` from any source above
 2. Open Claude → **Customize → Plugins → Add → Upload plugin**
 3. Select the ZIP file
 4. On your first Neo conversation, Claude will prompt you to authorize the connection via neogo.app
 5. Authorize → connection established
 
-### Manual (Claude Code)
+### From the repository (Claude Code)
 
 ```bash
 git clone https://github.com/neogoapp/NeoPlugin ~/.claude/plugins/neo
