@@ -1,0 +1,37 @@
+# Empacota o plugin em neogo-plugin.zip e publica como asset da Release.
+#
+# O login do NeoGoApp aponta para
+#   https://github.com/neogoapp/NeoPlugin/releases/latest/download/neogo-plugin.zip
+# (asset da última release). Este workflow é quem produz esse zip.
+#
+# Dispara na tag vX.Y.Z que o scripts/commit.sh cria. O zip leva os arquivos do
+# plugin na RAIZ do zip (.claude-plugin/, skills/, .mcp.json, README, LICENSE,
+# VERSION) — a mesma disposição do `git clone ... ~/.claude/plugins/neo`. Exclui
+# repo-cruft (.git, .github, scripts) que não faz parte do plugin.
+name: release-zip
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write # criar a Release e anexar o asset
+
+jobs:
+  zip-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Empacotar o plugin
+        run: |
+          zip -r neogo-plugin.zip . \
+            -x '.git/*' '.github/*' 'scripts/*' 'neogo-plugin.zip'
+
+      - name: Publicar a Release com o zip
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" neogo-plugin.zip \
+            --title "$GITHUB_REF_NAME" \
+            --notes "NeoPlugin $GITHUB_REF_NAME — instale via Claude → Customize → Plugins → Add → Upload plugin."
