@@ -22,7 +22,6 @@ With NeoGo you:
 - **Run multi-agent workflows** in natural language on **your own container** — on your
   machine, with **your own Anthropic account** (BYO). No central LLM proxy, no platform
   API keys.
-- (detalhes de funcionamento interno removidos)
 
 Authentication is automatic via **OAuth 2.1 + PKCE** — no token configuration.
 
@@ -31,12 +30,13 @@ Authentication is automatic via **OAuth 2.1 + PKCE** — no token configuration.
 This plugin is the **door, not the workshop**.
 
 The actual work — campaigns, research, publishing, files — happens in the user's own
-container, through the **terminal in the dashboard** (*Access your Neo*). That Neo has the
-the user's connectors and the user's files are. Neo here recognizes
-that request and takes the user there, instead of delivering a lesser version of it.
+container, through the **terminal in the dashboard** (*Access your Neo*). That is where the
+user's connectors and files are, and where Neo has everything it needs to deliver. Neo here
+recognizes that request and takes the user there, instead of delivering a lesser version
+of it.
 
-The container installs **nothing from this plugin**: its connectors come from the NeoGo
-server, already resolved for the environment it runs in.
+This plugin installs nothing in the user's Neo — the two are separate, and each one comes
+with what it needs.
 
 ## Installation
 
@@ -72,9 +72,8 @@ Tools available here:
 | `get_plugin_manifest` | Onboarding — what is available |
 | `get_login_code` | The second factor of the login, delivered in Claude |
 
-These are the tools of the door: connect, subscribe, sign in, install.
-NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
-commands their Neo directly, through the terminal in the dashboard.
+These are the tools of the door: connect, subscribe, sign in, install. Everything the user
+asks NeoGo to *do* happens in their own Neo, through the terminal in the dashboard.
 
 ## Structure
 
@@ -110,12 +109,10 @@ NeoPlugin/
   pelo terminal do dashboard.
 - **Fica só o essencial: a skill `neo` e o conector `neogo`.** O *connector pack* de
   terceiros (`composio`, `kairogen`, `higgsfield`, `facebook-ads`, `metricool`, `wix`,
-  `okx`, `alpaca`) **sai** do `.mcp.json` — esses conectores são do ambiente de trabalho, e
-  o container os recebe da lista global do servidor, já com o endereço do ambiente dele.
-  Mantê-los aqui duplicava a mesma declaração em dois lugares que se atualizam por
-  caminhos diferentes.
-- **README e skill sem o mundo antigo:** sai a instalação por `git clone` no Claude Code e a
-  menção ao Remote Control (o acesso ao container é o terminal do dashboard).
+  `okx`, `alpaca`) **sai** do `.mcp.json`: esses conectores pertencem ao ambiente de
+  trabalho do usuário, que já vem servido com eles.
+- **README e skill sem o mundo antigo:** sai a instalação por `git clone` e a menção ao
+  Remote Control — o acesso ao Neo do usuário é o terminal do dashboard.
 
 ### v1.4.1
 - **Identificadores em minúsculas, por spec.** O `name` do `plugin.json` exige **kebab-case**
@@ -125,40 +122,31 @@ NeoPlugin/
   não do identificador.
 
 ### v1.3.1
-- (detalhes de funcionamento interno removidos)
-  v2, que a **D5 revogou** — o usuário comanda o claude-code direto por Remote Control, sem
-  round-trip via MCP. Removidas as tools de fila e o "delegue, não execute"; entra a regra de
-  **redirecionamento** (D38): o Neo age na sessão Code que alcança o container, e redireciona
-  quando invocado em qualquer outro canal.
+- **Correção:** o plugin descrevia um modo de trabalho herdado da versão anterior, em que ele
+  próprio conduzia as tarefas. Não é assim: o usuário comanda o Neo dele diretamente. Entra
+  a regra de **redirecionamento** — pedidos de trabalho vão para onde o Neo do usuário está.
 
 ### v1.2.1
 - Renomeia a skill `neogoskill` → **`neo`**, alinhando ao nome que a arquitetura já usava.
 
 ### v1.2.0
-- **O plugin passa a carregar o Neo externo** — persona própria, sem IP. Antes ele buscava a
-  NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
-- **Papel explicitado:** Neo é a porta de entrada. Vende o NeoGo a quem ainda não é usuário
-  e é o ponto de contato de quem já é (resolve conexão, conta e container).
-- **Sem conhecimento de domínio no plugin.** O que o NeoGo sabe fazer não mora aqui.
-  servidos pelo servidor e rodam no container. O plugin tem tom, não método.
-- (detalhes de funcionamento interno removidos)
-  por onde se está.
+- **O plugin passa a carregar o Neo externo** — persona própria, que nasce sabendo quem é.
+- **Papel explicitado:** Neo é a porta de entrada. Apresenta o NeoGo a quem ainda não é
+  usuário e é o ponto de contato de quem já é (conexão, conta e instalação).
+- **O plugin tem tom, não método.** O que o NeoGo sabe fazer não mora aqui.
 
 ### v1.1.0
 - **Connector pack** no `.mcp.json`: além do `neogo` (gateway), 8 conectores de
   terceiros — `composio`, `kairogen`, `higgsfield`, `facebook-ads`, `metricool`,
   `wix`, `okx`, `alpaca` — cobrindo os casos de uso. Todos remotos (`type: url`).
-- **Lazy-auth:** conectores são registrados mas nenhum autentica sozinho (ficam
-  *needs auth* até o usuário autorizar em `/mcp`); `neogo` é o primeiro a autorizar.
-  Conectores são declaração (não-IP), por isso cabem no plugin. Ver seção *Connectors*.
+- **Lazy-auth:** conectores são registrados mas nenhum autentica sozinho — cada um fica
+  aguardando autorização até o usuário quiser usá-lo; `neogo` é o primeiro a autorizar.
 
 ### v1.0.3
 - `SKILL.md`: ajuste de vocabulário, alinhando os termos ao que o usuário vê.
-  NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
 
 ### v1.0.2
-- (detalhes de funcionamento interno removidos)
-  não apenas chama tools — alinha ao Épico 3 (persona Neo no host).
+- `SKILL.md`: o assistente **encarna** o Neo, em vez de apenas chamar ferramentas.
 
 ### v1.0.1
 - README: adiciona `LICENSE` ao diagrama de estrutura + nota de que o changelog é
@@ -167,5 +155,4 @@ NeoPlugin/
 ### v1.0.0
 - Initial release. Thin gateway: a single `neo` entry point plus the MCP
   connector (OAuth 2.1 + PKCE) to `mcp.neogo.app`.
-- The operating protocol and utilities are served on demand by the server
-  NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
+- What NeoGo knows how to do is served on demand — the plugin stays tiny and always current.
