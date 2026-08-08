@@ -7,8 +7,17 @@ Claude Plugin that connects Claude to Neo — your AI agent running outside the 
 NeoPlugin is the **way in** to NeoGo, for the **Claude app and claude.ai**. It carries two
 things and nothing else:
 
-- the **`neo` skill** — the assistant the user talks to;
+- the **`neo` skills** — Neo, the assistant the user talks to, plus two shortcuts for the
+  things people ask for by name;
 - the **`neogo` MCP connector** (`mcp.neogo.app`), over OAuth 2.1 + PKCE.
+
+| Skill | What it does |
+|-------|--------------|
+| `/neo` | Talk to Neo — about NeoGo, the account, the connection, the installation |
+| `/neo-login-code` | Hands over the second-factor code to finish signing in to the dashboard |
+| `/neo-link-install` | Hands over the install command for the user's machine |
+
+Typing `/neo` lists the three, so the user chooses between talking and acting.
 
 Neo's job here is to get the user connected and keep them connected:
 
@@ -83,8 +92,12 @@ NeoPlugin/
 │   └── plugin.json         # Plugin manifest
 ├── .mcp.json               # One connector: neogo (mcp.neogo.app)
 ├── skills/
-│   └── neo/
-│       └── SKILL.md        # Neo: connects, sells, supports, delegates
+│   ├── neo/
+│   │   └── SKILL.md        # Neo: connects, sells, supports, delegates
+│   ├── neo-login-code/
+│   │   └── SKILL.md        # Shortcut: the second-factor code
+│   └── neo-link-install/
+│       └── SKILL.md        # Shortcut: the install command
 ├── scripts/
 │   └── commit.sh           # Versioned commit helper
 ├── LICENSE
@@ -102,6 +115,15 @@ NeoPlugin/
 ## Changelog
 
 > Mantido manualmente — o `commit.sh` versiona `VERSION` e `plugin.json`, mas não edita esta seção.
+
+### v1.13.0
+- **Duas skills novas, de ação:** `/neo-login-code` (o código do segundo fator) e
+  `/neo-link-install` (o comando de instalação). Cada uma chama a ferramenta certa e
+  entrega o resultado, sem passar por uma conversa.
+- **Por que o prefixo `neo-`:** o nome da skill é o que o usuário digita, e o menu filtra
+  por texto — com o prefixo, digitar `/neo` lista as três e ele escolhe entre falar com o
+  Neo ou pedir a ação. (`:` não é aceito no nome de uma skill: a spec permite apenas
+  minúsculas, números e hífens.)
 
 ### v1.12.0
 - **O plugin é do claude.ai — app e web.** É lá que ele serve: a porta de entrada do NeoGo,
