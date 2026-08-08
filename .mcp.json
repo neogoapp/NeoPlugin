@@ -3,38 +3,6 @@
     "neogo": {
       "type": "http",
       "url": "https://mcp.neogo.app"
-    },
-    "composio": {
-      "type": "http",
-      "url": "https://connect.composio.dev/mcp"
-    },
-    "kairogen": {
-      "type": "http",
-      "url": "https://mcp.kairogen.ai/mcp"
-    },
-    "higgsfield": {
-      "type": "http",
-      "url": "https://mcp.higgsfield.ai/mcp"
-    },
-    "facebook-ads": {
-      "type": "http",
-      "url": "https://mcp.facebook.com/ads"
-    },
-    "metricool": {
-      "type": "http",
-      "url": "https://ai.metricool.com/mcp"
-    },
-    "wix": {
-      "type": "http",
-      "url": "https://mcp.wix.com/mcp"
-    },
-    "okx": {
-      "type": "http",
-      "url": "https://web3.okx.com/api/v1/onchainos-mcp"
-    },
-    "alpaca": {
-      "type": "http",
-      "url": "https://alpaca.markets/mcp-server"
     }
   }
 }

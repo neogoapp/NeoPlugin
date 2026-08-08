@@ -4,16 +4,18 @@ Claude Plugin that connects Claude to Neo — your AI agent running outside the 
 
 ## What it does
 
-NeoPlugin is the **way in** to NeoGo. It adds one MCP connector and one small skill
-(`neo`), and it carries **Neo** — the assistant the user talks to.
+NeoPlugin is the **way in** to NeoGo, for the **Claude app and claude.ai**. It carries two
+things and nothing else:
+
+- the **`neo` skill** — the assistant the user talks to;
+- the **`neogo` MCP connector** (`mcp.neogo.app`), over OAuth 2.1 + PKCE.
 
 Neo's job here is to get the user connected and keep them connected:
 
 - **Not a NeoGo user yet?** Neo explains what it is in terms of what *they* do, and points
   them to sign up. Honestly — no invented capabilities, no manufactured urgency.
-- **Already a user?** Neo is their point of contact: it does the work in the container and
-  owns the problem when something is off (container not running, connection unauthorized,
-  subscription lapsed, connector missing).
+- **Already a user?** Neo is their point of contact: it owns the problem when something is
+  off (installation not running, connection unauthorized, subscription lapsed).
 
 With NeoGo you:
 
@@ -24,46 +26,45 @@ With NeoGo you:
 
 Authentication is automatic via **OAuth 2.1 + PKCE** — no token configuration.
 
-## How it works
+## Where the work happens
 
-The plugin is deliberately thin, and it holds **no domain knowledge**. What NeoGo knows
-routing and the procedures are served by the NeoGo server and run in the container — new
-behavior ships on the server, not in a plugin update.
+This plugin is the **door, not the workshop**.
 
-The user reaches Neo in the **Code session** that connects to their container (Remote
-Control). Invoked in any other channel, Neo redirects them there.
+The actual work — campaigns, research, publishing, files — happens in the user's own
+container, through the **terminal in the dashboard** (*Access your Neo*). That Neo has the
+the user's connectors and the user's files are. Neo here recognizes
+that request and takes the user there, instead of delivering a lesser version of it.
+
+The container installs **nothing from this plugin**: its connectors come from the NeoGo
+server, already resolved for the environment it runs in.
 
 ## Installation
 
-NeoPlugin is a **public plugin**. Get `neoplugin.zip` from any of these — they all point to the same file:
+NeoPlugin is a **public plugin**. Get `neoplugin.zip` from any of these — they all point to
+the same file:
 
 - the **onboarding** link (shown when you sign in at neogo.app without the plugin yet),
 - your [**NeoGo dashboard**](https://neogo.app/dashboard),
-- this repo's [**Releases**](https://github.com/neogoapp/NeoPlugin/releases/latest) (`neoplugin.zip`).
-
-### From Claude.ai
+- this repo's [**Releases**](https://github.com/neogoapp/NeoPlugin/releases/latest)
+  (`neoplugin.zip`).
 
 1. Download `neoplugin.zip` from any source above
 2. Open Claude → **Customize → Plugins → Add → Upload plugin**
 3. Select the ZIP file
-4. On your first Neo conversation, Claude will prompt you to authorize the connection via neogo.app
+4. On your first Neo conversation, Claude will prompt you to authorize the connection via
+   neogo.app
 5. Authorize → connection established
 
-### From the repository (Claude Code)
-
-```bash
-git clone https://github.com/neogoapp/NeoPlugin ~/.claude/plugins/neo
-```
-
-On first use, Claude opens the OAuth flow automatically.
-
-> **Subscription required.** A neogo.app account with an active subscription. If a NeoGo tool reports you're unauthorized, complete the OAuth prompt or subscribe at https://neogo.app.
+> **Subscription required.** A neogo.app account with an active subscription. If a NeoGo
+> tool reports you're unauthorized, complete the OAuth prompt or subscribe at
+> https://neogo.app.
 
 ## MCP Connector
 
-The connector at `mcp.neogo.app` uses OAuth 2.1 + PKCE. Claude handles the auth flow transparently — no manual token setup.
+The connector at `mcp.neogo.app` uses OAuth 2.1 + PKCE. Claude handles the auth flow
+transparently — no manual token setup.
 
-Tools available to the plugin:
+Tools available here:
 
 | Tool | Description |
 |------|-------------|
@@ -73,7 +74,7 @@ Tools available to the plugin:
 
 These are the tools of the door: connect, subscribe, sign in, install.
 NeoGo runs on the user's own machine, with their own Anthropic account (BYO).
-commands Claude directly through Remote Control.
+commands their Neo directly, through the terminal in the dashboard.
 
 ## Structure
 
@@ -81,7 +82,7 @@ commands Claude directly through Remote Control.
 NeoPlugin/
 ├── .claude-plugin/
 │   └── plugin.json         # Plugin manifest
-├── .mcp.json               # MCP connectors: neogo (gateway) + connector pack (see Connectors)
+├── .mcp.json               # One connector: neogo (mcp.neogo.app)
 ├── skills/
 │   └── neo/
 │       └── SKILL.md        # Neo: connects, sells, supports, delegates
@@ -90,34 +91,6 @@ NeoPlugin/
 ├── LICENSE
 └── VERSION                 # Current plugin version
 ```
-
-## Connectors
-
-The plugin bundles a **connector pack** in `.mcp.json`: the NeoGo gateway plus
-curated third-party MCP servers that cover the use cases (marketing, social,
-sites, content, finance, e-commerce). Connectors are **declarations only** (not
-IP), so they live in the plugin.
-
-| Connector | Endpoint | Serves |
-|-----------|----------|--------|
-| `neogo` | `mcp.neogo.app` | **Gateway (required)** — authorize first. |
-| `composio` | `connect.composio.dev/mcp` | Hub (Google Ads, Google Workspace, automation…) |
-| `kairogen` | `mcp.kairogen.ai/mcp` | Media generation (image/video/audio) |
-| `higgsfield` | `mcp.higgsfield.ai/mcp` | Media + site build/deploy |
-| `facebook-ads` | `mcp.facebook.com/ads` | Meta Ads |
-| `metricool` | `ai.metricool.com/mcp` | Social scheduling + analytics |
-| `wix` | `mcp.wix.com/mcp` | Sites + eCommerce |
-| `okx` | `web3.okx.com/api/v1/onchainos-mcp` | Crypto trading |
-| `alpaca` | `alpaca.markets/mcp-server` | Stocks/ETF/options trading |
-
-**Auth is lazy.** When the plugin is enabled, the connectors are registered but
-**none logs you in automatically** — each remote server is marked *needs
-authentication* until you authorize it in `/mcp`. Authorize `neogo` first (it's
-the gateway); authorize the others only when you want to use them. Nothing
-bombards you with logins on install.
-
-> Third-party connectors are curated defaults; connecting each one uses **your
-> own account** (BYO). You can also add your own connectors alongside these.
 
 ## Development
 
@@ -130,6 +103,19 @@ bombards you with logins on install.
 ## Changelog
 
 > Mantido manualmente — o `commit.sh` versiona `VERSION` e `plugin.json`, mas não edita esta seção.
+
+### v1.12.0
+- **O plugin é do claude.ai — app e web.** É lá que ele serve: a porta de entrada do NeoGo,
+  onde o usuário conhece, assina e cuida da conta. O trabalho fica no container, alcançado
+  pelo terminal do dashboard.
+- **Fica só o essencial: a skill `neo` e o conector `neogo`.** O *connector pack* de
+  terceiros (`composio`, `kairogen`, `higgsfield`, `facebook-ads`, `metricool`, `wix`,
+  `okx`, `alpaca`) **sai** do `.mcp.json` — esses conectores são do ambiente de trabalho, e
+  o container os recebe da lista global do servidor, já com o endereço do ambiente dele.
+  Mantê-los aqui duplicava a mesma declaração em dois lugares que se atualizam por
+  caminhos diferentes.
+- **README e skill sem o mundo antigo:** sai a instalação por `git clone` no Claude Code e a
+  menção ao Remote Control (o acesso ao container é o terminal do dashboard).
 
 ### v1.4.1
 - **Identificadores em minúsculas, por spec.** O `name` do `plugin.json` exige **kebab-case**
