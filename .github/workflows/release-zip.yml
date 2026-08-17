@@ -47,6 +47,11 @@ jobs:
 
       # Cria o release se ainda não existe (tag nova); se já existe (re-run manual da
       # versão atual), só substitui o zip. Idempotente nos dois gatilhos.
+      #
+      # `--latest` EXPLÍCITO: sem ele o GitHub decide pela DATA de criação. Em 2026-08-17
+      # duas tags foram empurradas juntas, estes jobs rodaram em PARALELO, e o da versão
+      # MENOR terminou por último — levando o rótulo "Latest" e, com ele, o link
+      # /releases/latest/download/neoplugin.zip que o dashboard e o README usam.
       - name: Publicar/atualizar o release com o zip
         env:
           GH_TOKEN: ${{ github.token }}
@@ -54,8 +59,10 @@ jobs:
           TAG='${{ steps.tag.outputs.tag }}'
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" neoplugin.zip --clobber
+            gh release edit "$TAG" --latest
           else
             gh release create "$TAG" neoplugin.zip \
               --title "$TAG" \
+              --latest \
               --notes "NeoPlugin $TAG — instale via Claude → Customize → Plugins → Add → Upload plugin."
           fi

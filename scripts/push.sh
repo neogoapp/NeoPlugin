@@ -73,16 +73,25 @@ trap 'rm -f "$RAIZ/$ZIP"' EXIT
 # --- 3. a Release -----------------------------------------------------------
 # Idempotente como o CI: existe → só troca o asset; não existe → cria. Um `--clobber` a
 # menos aqui e a Release ficaria com o zip da versão anterior, sem erro nenhum.
+#
+# `--latest` EXPLÍCITO nos dois caminhos. Sem ele o GitHub escolhe sozinho, e a escolha é
+# pela DATA: em 2026-08-17 duas tags foram empurradas juntas, os jobs do CI rodaram em
+# paralelo, e a v1.13.1 terminou 5 segundos depois da v1.14.0 — ficando com o rótulo
+# "Latest" mesmo sendo a versão menor. Quem paga a conta é o link
+# /releases/latest/download/neoplugin.zip: o dashboard e o README passam a servir o plugin
+# ERRADO, sem erro nenhum aparecer.
 log "publicando a Release ${TAG}"
 if gh release view "$TAG" >/dev/null 2>&1; then
   gh release upload "$TAG" "$ZIP" --clobber || die "não consegui atualizar o asset da ${TAG}"
-  ok "asset da ${TAG} atualizado"
+  gh release edit "$TAG" --latest >/dev/null || die "não consegui marcar a ${TAG} como Latest"
+  ok "asset da ${TAG} atualizado e marcada como Latest"
 else
   gh release create "$TAG" "$ZIP" \
     --title "$TAG" \
+    --latest \
     --notes "NeoPlugin ${TAG} — instale via Claude → Customize → Plugins → Add → Upload plugin." \
     || die "não consegui criar a Release ${TAG}"
-  ok "Release ${TAG} criada"
+  ok "Release ${TAG} criada e marcada como Latest"
 fi
 
 log "pronto"
