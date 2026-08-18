@@ -7,7 +7,7 @@
 #
 # Uso:  ./scripts/push.sh
 #
-# Ordem: git push → git push --tags → zip → publicar/atualizar a Release.
+# Ordem: git push → git push da tag desta versão → zip → publicar/atualizar a Release.
 # As checagens caras (gh autenticado, árvore limpa, tag existente) rodam ANTES de qualquer
 # empurrão, para o script falhar sem ter deixado meio trabalho no ar.
 #
@@ -52,8 +52,14 @@ ok "credencial ok"
 # --- 1. git -----------------------------------------------------------------
 log "git push"
 git -C "$RAIZ" push
-log "git push --tags"
-git -C "$RAIZ" push --tags
+# SÓ a tag desta versão, não `--tags`.
+#
+# `--tags` empurra TODAS as tags pendentes de uma vez, e cada uma dispara um job do CI. Foi
+# assim que o rótulo "Latest" foi parar na versão errada em 2026-08-17: duas tags subiram
+# juntas, os jobs rodaram em paralelo, e o da versão MENOR terminou 5 segundos depois.
+# Empurrando uma tag por release, cada publicação acontece sozinha e na ordem.
+log "git push da tag ${TAG}"
+git -C "$RAIZ" push origin "$TAG"
 
 # --- 2. o zip ---------------------------------------------------------------
 # MESMA disposição do CI: os arquivos do plugin na RAIZ do zip (.claude-plugin/, skills/,
