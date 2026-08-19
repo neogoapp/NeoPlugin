@@ -9,7 +9,10 @@
 #   ./scripts/commit.sh chore  "description" (patch bump)
 set -euo pipefail
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# `readlink -f` because the root may hold a shortcut (./push.sh is already a symlink to
+# scripts/push.sh). Without it, when called through the link `dirname` sees "." and the path
+# lands one directory ABOVE the repository — reading the wrong VERSION and committing elsewhere.
+REPO_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
 VERSION_FILE="${REPO_DIR}/VERSION"
 
 usage() {
