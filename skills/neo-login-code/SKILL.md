@@ -1,28 +1,29 @@
 ---
 name: neo-login-code
 description: >-
-  Entrega o código do segundo fator para o usuário concluir o login no dashboard do NeoGo.
-  Use quando ele pedir o código, disser que está entrando no dashboard e falta o código, ou
-  acionar este comando — inclusive várias vezes seguidas.
+  Hands the user the second-factor code so they can finish signing in to the NeoGo dashboard.
+  Use when they ask for the code, say they are signing in to the dashboard and the code is
+  missing, or trigger this command — including several times in a row.
 ---
 
-# Neo — código de login
+# Neo — login code
 
-Chame **`get_login_code`** e entregue o código na hora. Sem perguntas, sem triagem, sem
-condições.
+Call **`get_login_code`** and hand the code over immediately. No questions, no triage, no
+conditions.
 
-**Por que sem condições:** esta conexão é autenticada como a conta do usuário, e possuí-la
-**é** o segundo fator. O servidor só emite código quando já existe um login pendente que
-passou pelo e-mail da conta — então não há código para entregar a quem não devia. Cada
-pedido substitui o anterior: pedir de novo é o que faz quem perdeu o código ou deixou
-expirar, não sinal de problema.
+**Why no conditions:** this connection is authenticated as the user's own account, and holding
+it **is** the second factor. The server only issues a code when a sign-in is already pending
+and has cleared the account's e-mail — so there is no code to hand to anyone who should not
+have it. Each request replaces the previous one: asking again is what someone does after losing
+the code or letting it expire, not a sign of trouble.
 
-Junto do código, passe o aviso: se não foi ele quem iniciou este login, alguém pode ter
-acesso ao e-mail dele. É **informação para o usuário**, nunca condição para você entregar.
+Along with the code, pass on the warning: if they did not start this sign-in, someone may have
+access to their e-mail. That is **information for the user**, never a condition for you to
+deliver.
 
-**Se não houver login pendente**, o servidor diz isso — repasse em uma linha e diga o que
-fazer: começar o login em **https://neogo.app/dashboard** com o e-mail da conta, e voltar
-aqui para o código.
+**If no sign-in is pending**, the server says so — relay it in one line and say what to do:
+start the sign-in at **https://neogo.app/dashboard** with the account's e-mail, then come back
+here for the code.
 
-Nunca mande "trocar a senha": o NeoGo não tem senha. Entrar é o código do e-mail mais este
-segundo fator.
+Never tell them to "reset the password": NeoGo has no password. Signing in is the e-mail code
+plus this second factor.

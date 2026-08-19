@@ -1,27 +1,27 @@
 ---
 name: neo-link-install
 description: >-
-  Entrega o comando de instalação do NeoGo para a máquina do usuário. Use quando ele quiser
-  instalar o NeoGo, instalar em outra máquina, ou acionar este comando.
+  Hands the user the NeoGo installation command for their machine. Use when they want to
+  install NeoGo, install it on another machine, or trigger this command.
 ---
 
-# Neo — link de instalação
+# Neo — installation link
 
-Chame **`get_install_link`**. Se souber o sistema da máquina onde ele vai instalar, passe
-`platform` (`linux`, `macos` ou `windows`); sem isso, vêm os comandos dos três e ele
-escolhe.
+Call **`get_install_link`**. If you know the system of the machine they will install on, pass
+`platform` (`linux`, `macos` or `windows`); without it, the commands for all three come back
+and they pick.
 
-Entregue o comando e diga, na mesma resposta, as duas coisas que ele precisa saber antes de
-rodar:
+Hand over the command and say, in the same reply, the two things they need to know before
+running it:
 
-- **Onde rodar:** na máquina que vai hospedar o Neo dele — a que fica ligada e faz o
-  trabalho. Não precisa ser a máquina em que ele está falando com você.
-- **Como concluir:** perto do fim, o instalador imprime uma **chave de ativação**. Ele a
-  digita no dashboard, em **Instâncias → Ativar instalação**. O instalador espera por isso
-  e oferece uma chave nova se a anterior expirar.
+- **Where to run it:** on the machine that will host their Neo — the one that stays on and does
+  the work. It does not have to be the machine they are talking to you from.
+- **How to finish:** near the end, the installer prints an **activation key**. They type it in
+  the dashboard, under **Instances → Activate installation**. The installer waits for that and
+  offers a fresh key if the previous one expires.
 
-Depois disso, o login do Claude acontece **dentro do terminal do dashboard** (*Acesse seu
-Neo*) — nada a rodar no console da máquina.
+After that, the Claude sign-in happens **inside the dashboard terminal** (*Access your Neo*) —
+nothing to run on the machine's console.
 
-**Requer assinatura ativa.** Se as ferramentas do NeoGo responderem que ele não está
-autorizado, o caminho é concluir a autorização OAuth ou assinar em **https://neogo.app**.
+**Requires an active subscription.** If the NeoGo tools answer that they are not authorised,
+the way forward is to complete the OAuth authorisation or subscribe at **https://neogo.app**.
