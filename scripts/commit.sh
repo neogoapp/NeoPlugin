@@ -45,7 +45,9 @@ case "$TYPE" in
     MAJOR=$((MAJOR + 1))
     MINOR=0
     PATCH=0
-    PREFIX="feat"
+    # `major`, not `feat`: a major release written as a feature is indistinguishable from any
+    # other in the history.
+    PREFIX="major"
     ;;
   docs|chore)
     PATCH=$((PATCH + 1))
