@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# scripts/commit.sh — commit com bump automático de versão
+# scripts/commit.sh — commit with automatic version bump
 #
-# Uso:
-#   ./scripts/commit.sh fix    "descrição do fix"
-#   ./scripts/commit.sh feat   "descrição da feature"
-#   ./scripts/commit.sh major  "descrição da major release"
-#   ./scripts/commit.sh docs   "descrição" (bump patch)
-#   ./scripts/commit.sh chore  "descrição" (bump patch)
+# Usage:
+#   ./scripts/commit.sh fix    "what the fix does"
+#   ./scripts/commit.sh feat   "what the feature does"
+#   ./scripts/commit.sh major  "what the major release does"
+#   ./scripts/commit.sh docs   "description" (patch bump)
+#   ./scripts/commit.sh chore  "description" (patch bump)
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VERSION_FILE="${REPO_DIR}/VERSION"
 
 usage() {
-  echo "Uso: $0 <fix|feat|major|docs|chore> <mensagem>"
+  echo "Usage: $0 <fix|feat|major|docs|chore> <message>"
   exit 1
 }
 
@@ -22,7 +22,7 @@ usage() {
 TYPE="$1"
 MSG="$2"
 
-# Ler versão atual
+# Read the current version
 VERSION=$(cat "$VERSION_FILE")
 MAJOR=$(echo "$VERSION" | cut -d. -f1)
 MINOR=$(echo "$VERSION" | cut -d. -f2)
@@ -49,7 +49,7 @@ case "$TYPE" in
     PREFIX="$TYPE"
     ;;
   *)
-    echo "Tipo desconhecido: '$TYPE'. Use: fix|feat|major|docs|chore"
+    echo "Unknown type: '$TYPE'. Use: fix|feat|major|docs|chore"
     exit 1
     ;;
 esac
@@ -57,7 +57,7 @@ esac
 NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
 echo "$NEW_VERSION" > "$VERSION_FILE"
 
-# Manter versão do manifesto do plugin em sincronia
+# Keep the plugin manifest version in sync
 PLUGIN_JSON="${REPO_DIR}/.claude-plugin/plugin.json"
 sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${NEW_VERSION}\"/" "$PLUGIN_JSON"
 
@@ -66,8 +66,8 @@ COMMIT_MSG="${PREFIX}(v${NEW_VERSION}): ${MSG}"
 
 git -C "$REPO_DIR" commit -m "$COMMIT_MSG"
 
-# Criar tag anotada
+# Create the annotated tag
 git -C "$REPO_DIR" tag -a "v${NEW_VERSION}" HEAD -m "Release v${NEW_VERSION}"
-echo "Tag criada: v${NEW_VERSION}"
+echo "Tag created: v${NEW_VERSION}"
 
 echo "Commit: ${COMMIT_MSG}"

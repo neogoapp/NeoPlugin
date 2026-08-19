@@ -1,18 +1,19 @@
-# Empacota o plugin em neoplugin.zip e publica como asset da Release.
+# Packages the plugin into neoplugin.zip and publishes it as a Release asset.
 #
-# O login do NeoGoApp aponta para
+# The NeoGoApp sign-in points at
 #   https://github.com/neogoapp/NeoPlugin/releases/latest/download/neoplugin.zip
-# (asset da última release). Este workflow é quem produz esse zip.
+# (the latest release's asset). This workflow is what produces that zip.
 #
-# Dois gatilhos:
-#   - push de tag vX.Y.Z (o scripts/commit.sh cria) → fluxo normal de release.
-#   - workflow_dispatch (botão "Run workflow") → REFAZ o zip da versão atual (lê o
-#     VERSION do branch) e ATUALIZA o release dela. Não cria versão nova — versão
-#     nova é só via bump/tag. Sem clicar o botão, nada muda no fluxo normal.
+# Two triggers:
+#   - push of a vX.Y.Z tag (created by scripts/commit.sh) → the normal release flow.
+#   - workflow_dispatch (the "Run workflow" button) → REBUILDS the current version's zip
+#     (reading VERSION from the branch) and UPDATES its release. It does not create a new
+#     version — that only happens through bump/tag. Without pressing the button, nothing
+#     changes in the normal flow.
 #
-# O zip leva os arquivos do plugin na RAIZ do zip (.claude-plugin/, skills/,
-# .mcp.json, README, LICENSE, VERSION) — a mesma disposição do
-# `git clone ... ~/.claude/plugins/neo`. Exclui repo-cruft (.git, .github, scripts).
+# The zip carries the plugin's files at its ROOT (.claude-plugin/, skills/, .mcp.json,
+# README, LICENSE, VERSION) — the same layout as
+# `git clone ... ~/.claude/plugins/neo`. Repo cruft (.git, .github, scripts) is excluded.
 name: release-zip
 
 on:
@@ -21,7 +22,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: write # criar a Release e anexar o asset
+  contents: write # create the Release and attach the asset
 
 jobs:
   zip-and-release:
@@ -29,14 +30,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Empacotar o plugin
+      - name: Package the plugin
         run: |
           zip -r neoplugin.zip . \
             -x '.git/*' '.github/*' 'scripts/*' 'neoplugin.zip'
 
-      # Na tag push, a versão é a própria tag. No botão manual (roda de um branch),
-      # o ref é o nome do branch — inútil como release —, então tiramos do VERSION.
-      - name: Definir a tag do release
+      # On a tag push the version is the tag itself. On the manual button (which runs from a
+      # branch) the ref is the branch name — useless as a release — so we read VERSION.
+      - name: Resolve the release tag
         id: tag
         run: |
           if [ "$GITHUB_REF_TYPE" = "tag" ]; then
@@ -45,14 +46,14 @@ jobs:
             echo "tag=v$(cat VERSION)" >> "$GITHUB_OUTPUT"
           fi
 
-      # Cria o release se ainda não existe (tag nova); se já existe (re-run manual da
-      # versão atual), só substitui o zip. Idempotente nos dois gatilhos.
+      # Creates the release if it does not exist yet (new tag); if it does (a manual re-run of
+      # the current version), it just replaces the zip. Idempotent under both triggers.
       #
-      # `--latest` EXPLÍCITO: sem ele o GitHub decide pela DATA de criação. Em 2026-08-17
-      # duas tags foram empurradas juntas, estes jobs rodaram em PARALELO, e o da versão
-      # MENOR terminou por último — levando o rótulo "Latest" e, com ele, o link
-      # /releases/latest/download/neoplugin.zip que o dashboard e o README usam.
-      - name: Publicar/atualizar o release com o zip
+      # `--latest` is EXPLICIT: without it GitHub decides by creation DATE. On 2026-08-17 two
+      # tags were pushed together, these jobs ran in PARALLEL, and the one for the LOWER
+      # version finished last — taking the "Latest" label and, with it, the
+      # /releases/latest/download/neoplugin.zip link the dashboard and the README rely on.
+      - name: Publish/update the release with the zip
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

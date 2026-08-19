@@ -1,104 +1,104 @@
 #!/usr/bin/env bash
-# scripts/push.sh — empurra o trabalho: commits, tags e o neoplugin.zip na Release.
+# scripts/push.sh — ships the work: commits, tags and neoplugin.zip on the Release.
 #
-# É o CAMINHO DE CONTORNO de quando o CI não pode publicar (cota de Actions esgotada,
-# pagamento recusado, GitHub Actions fora). No dia a dia quem empacota e publica é o CI
-# (.github/workflows/release-zip.yml) — este script faz o MESMO trabalho, na sua máquina.
+# This is the FALLBACK PATH for when CI cannot publish (Actions quota exhausted, payment
+# declined, GitHub Actions down). Day to day, packaging and publishing is CI's job
+# (.github/workflows/release-zip.yml) — this script does the SAME work, on your machine.
 #
-# Uso:  ./scripts/push.sh
+# Usage:  ./scripts/push.sh
 #
-# Ordem: git push → git push da tag desta versão → zip → publicar/atualizar a Release.
-# As checagens caras (gh autenticado, árvore limpa, tag existente) rodam ANTES de qualquer
-# empurrão, para o script falhar sem ter deixado meio trabalho no ar.
+# Order: git push → git push of this version's tag → zip → publish/update the Release.
+# The expensive checks (gh authenticated, clean tree, tag present) run BEFORE anything is
+# pushed, so the script fails without leaving half the work out there.
 #
-# Pré-requisito: `gh` autenticado com permissão de escrita no repo
+# Requires: `gh` authenticated with write access to the repo
 #   gh auth login
 set -euo pipefail
 
-RAIZ="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
+ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
 ZIP="neoplugin.zip"
 
 log()  { printf '\n\033[1m==> %s\033[0m\n' "$*"; }
 ok()   { printf '    \033[0;32m✓\033[0m %s\n' "$*"; }
 die()  { printf '\n\033[0;31m!! %s\033[0m\n' "$*" >&2; exit 1; }
 
-TAG_VERSAO="$(cat "$RAIZ/VERSION" 2>/dev/null)" && [[ -n "$TAG_VERSAO" ]] \
-  || die "VERSION ausente em $RAIZ"
-TAG="v${TAG_VERSAO}"
+TAG_VERSION="$(cat "$ROOT/VERSION" 2>/dev/null)" && [[ -n "$TAG_VERSION" ]] \
+  || die "VERSION missing in $ROOT"
+TAG="v${TAG_VERSION}"
 
-# --- 0. checagens, todas antes de empurrar qualquer coisa --------------------
+# --- 0. checks, all of them before anything is pushed -----------------------
 
-# Árvore suja = o zip não corresponderia à tag. O commit.sh é quem fecha uma versão;
-# este script só a publica.
-[[ -z "$(git -C "$RAIZ" status --porcelain)" ]] \
-  || die "há mudanças não commitadas — feche a versão com ./scripts/commit.sh antes de publicar"
+# A dirty tree means the zip would not match the tag. commit.sh is what closes a version;
+# this script only publishes it.
+[[ -z "$(git -C "$ROOT" status --porcelain)" ]] \
+  || die "uncommitted changes — close the version with ./scripts/commit.sh before publishing"
 
-# A tag precisa existir: é ela que nomeia a Release, e é dela que o link
+# The tag has to exist: it names the Release, and the link
 # /releases/latest/download/neoplugin.zip depende.
-git -C "$RAIZ" rev-parse "$TAG" >/dev/null 2>&1 \
-  || die "a tag ${TAG} não existe — o commit.sh a cria junto do commit de release"
+git -C "$ROOT" rev-parse "$TAG" >/dev/null 2>&1 \
+  || die "tag ${TAG} does not exist — commit.sh creates it alongside the release commit"
 
-command -v gh >/dev/null 2>&1 || die "o gh (GitHub CLI) não está instalado — https://cli.github.com"
-command -v zip >/dev/null 2>&1 || die "o zip não está instalado (apt install zip / brew install zip)"
+command -v gh >/dev/null 2>&1 || die "gh (GitHub CLI) is not installed — https://cli.github.com"
+command -v zip >/dev/null 2>&1 || die "zip is not installed (apt install zip / brew install zip)"
 
-# Verificação REAL de credencial: uma consulta ao repo, não um grep em arquivo de config.
+# A REAL credential check: a query against the repo, not a grep in a config file.
 log "conferindo credencial do GitHub"
 gh repo view --json name >/dev/null 2>&1 || die \
-"sem acesso ao repositório pelo gh.
+"no access to the repository through gh.
     Autentique com:
         gh auth login"
 ok "credencial ok"
 
 # --- 1. git -----------------------------------------------------------------
 log "git push"
-git -C "$RAIZ" push
-# SÓ a tag desta versão, não `--tags`.
+git -C "$ROOT" push
+# ONLY this version's tag, not `--tags`.
 #
-# `--tags` empurra TODAS as tags pendentes de uma vez, e cada uma dispara um job do CI. Foi
-# assim que o rótulo "Latest" foi parar na versão errada em 2026-08-17: duas tags subiram
-# juntas, os jobs rodaram em paralelo, e o da versão MENOR terminou 5 segundos depois.
-# Empurrando uma tag por release, cada publicação acontece sozinha e na ordem.
+# `--tags` pushes EVERY pending tag at once, and each one triggers a CI job. That is
+# how the "Latest" label ended up on the wrong version on 2026-08-17: two tags went up
+# together, the jobs ran in parallel, and the one for the LOWER version finished 5 seconds
+# later. One tag per release, and each publication happens alone and in order.
 log "git push da tag ${TAG}"
-git -C "$RAIZ" push origin "$TAG"
+git -C "$ROOT" push origin "$TAG"
 
 # --- 2. o zip ---------------------------------------------------------------
-# MESMA disposição do CI: os arquivos do plugin na RAIZ do zip (.claude-plugin/, skills/,
-# .mcp.json, READMEs, LICENSE, VERSION), sem o cruft do repositório. Divergir daqui muda o
-# que o assinante instala — é por isso que a lista de exclusão é a mesma do workflow.
+# SAME layout as CI: the plugin's files at the ROOT of the zip (.claude-plugin/, skills/,
+# .mcp.json, READMEs, LICENSE, VERSION), without the repository cruft. Diverging here changes
+# what the subscriber installs — which is why the exclusion list matches the workflow's.
 log "empacotando ${ZIP}"
-cd "$RAIZ"
+cd "$ROOT"
 rm -f "$ZIP"
 zip -r "$ZIP" . -x '.git/*' '.github/*' 'scripts/*' "$ZIP" >/dev/null \
-  || die "falha ao empacotar — nada foi publicado"
+  || die "packaging failed — nothing was published"
 ok "$(du -h "$ZIP" | cut -f1) em ${ZIP}"
 
-# O zip é descartável: ele é o artefato da Release, não do repositório. Sai daqui mesmo se
-# a publicação falhar, para não virar arquivo solto que o próximo `git status` acusa.
-trap 'rm -f "$RAIZ/$ZIP"' EXIT
+# The zip is disposable: it is the Release's artifact, not the repository's. It goes even if
+# publishing fails, so it never becomes a stray file the next `git status` reports.
+trap 'rm -f "$ROOT/$ZIP"' EXIT
 
 # --- 3. a Release -----------------------------------------------------------
-# Idempotente como o CI: existe → só troca o asset; não existe → cria. Um `--clobber` a
-# menos aqui e a Release ficaria com o zip da versão anterior, sem erro nenhum.
+# Idempotent like CI: it exists → just swap the asset; it does not → create it. One missing
+# `--clobber` here and the Release would keep the previous version's zip, with no error at all.
 #
-# `--latest` EXPLÍCITO nos dois caminhos. Sem ele o GitHub escolhe sozinho, e a escolha é
+# `--latest` is EXPLICIT on both paths. Without it GitHub picks on its own, and it picks
 # pela DATA: em 2026-08-17 duas tags foram empurradas juntas, os jobs do CI rodaram em
-# paralelo, e a v1.13.1 terminou 5 segundos depois da v1.14.0 — ficando com o rótulo
-# "Latest" mesmo sendo a versão menor. Quem paga a conta é o link
-# /releases/latest/download/neoplugin.zip: o dashboard e o README passam a servir o plugin
-# ERRADO, sem erro nenhum aparecer.
-log "publicando a Release ${TAG}"
+# parallel, and v1.13.1 finished 5 seconds after v1.14.0 — taking the "Latest" label despite
+# being the lower version. The bill lands on the link
+# /releases/latest/download/neoplugin.zip: the dashboard and the README start serving the
+# WRONG plugin, with no error showing anywhere.
+log "publishing Release ${TAG}"
 if gh release view "$TAG" >/dev/null 2>&1; then
-  gh release upload "$TAG" "$ZIP" --clobber || die "não consegui atualizar o asset da ${TAG}"
-  gh release edit "$TAG" --latest >/dev/null || die "não consegui marcar a ${TAG} como Latest"
-  ok "asset da ${TAG} atualizado e marcada como Latest"
+  gh release upload "$TAG" "$ZIP" --clobber || die "could not update the asset on ${TAG}"
+  gh release edit "$TAG" --latest >/dev/null || die "could not mark ${TAG} as Latest"
+  ok "asset on ${TAG} updated and marked Latest"
 else
   gh release create "$TAG" "$ZIP" \
     --title "$TAG" \
     --latest \
-    --notes "NeoPlugin ${TAG} — instale via Claude → Customize → Plugins → Add → Upload plugin." \
-    || die "não consegui criar a Release ${TAG}"
-  ok "Release ${TAG} criada e marcada como Latest"
+    --notes "NeoPlugin ${TAG} — install via Claude → Customize → Plugins → Add → Upload plugin." \
+    || die "could not create Release ${TAG}"
+  ok "Release ${TAG} created and marked Latest"
 fi
 
-log "pronto"
+log "done"
 ok "https://github.com/neogoapp/NeoPlugin/releases/latest/download/${ZIP}"
